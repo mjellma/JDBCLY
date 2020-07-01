@@ -25,9 +25,14 @@ public class Connection {
         uriString = uriString.replace(JdbclyDriver.DRIVER_PREFIX, "");
         uriString = uriString.replace("\\", "/");
 
+        boolean containsParams = uriString.contains("?");
         scheme = uriString.substring(0, uriString.indexOf("://"));
-        String filePath = uriString.substring(scheme.length() + "://".length(), uriString.indexOf("?"));
-        String params = uriString.substring(uriString.indexOf("?"));
+        String filePath = uriString.substring(scheme.length() + "://".length(), containsParams ? uriString.indexOf("?") : uriString.length());
+
+        properties.put(Properties.URI.getKey(), filePath);
+
+        if (!containsParams) return;
+        String params = uriString.substring(uriString.indexOf("?")).replace("?", "");
 
         if (!Utils.isNullOrEmpty(params)) {
             String[] kv;
@@ -36,8 +41,6 @@ public class Connection {
                 properties.put(kv[0], kv[1]);
             }
         }
-
-        properties.put(Properties.URI.getKey(), filePath);
     }
 
     public String getScheme() {
