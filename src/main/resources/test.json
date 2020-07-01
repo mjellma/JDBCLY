@@ -1,0 +1,35 @@
+[
+  {
+    "casey": {
+      "frate": {
+        "qyteti": "elbasan",
+        "mandi": "nishtulla",
+        "tanck": {
+          "tancktanck": "gon kalaja"
+        }
+      }
+    }
+  },
+  {
+    "casey": {
+      "frate": {
+        "qyteti": "pogradec",
+        "mandi": "kinezi",
+        "tanck": {
+          "tancktanck": "tanck"
+        }
+      }
+    }
+  },
+  {
+    "casey": {
+      "frate": {
+        "qyteti": "tiron",
+        "mandi": "shefi vogel",
+        "tanck": {
+          "tancktanck": "andi shkoza"
+        }
+      }
+    }
+  }
+]

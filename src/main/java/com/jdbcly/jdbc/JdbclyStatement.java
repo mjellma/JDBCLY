@@ -1,0 +1,275 @@
+package com.jdbcly.jdbc;
+
+import com.jdbcly.core.JdbcUtils;
+import com.jdbcly.core.SelectStatement;
+import com.jdbcly.engine.Context;
+import com.jdbcly.engine.QueryEngine;
+import com.jdbcly.engine.RowSet;
+
+import java.sql.*;
+
+/**
+ * Date: 6/27/2020
+ */
+public class JdbclyStatement implements Statement {
+
+    protected Context context;
+    private boolean closed;
+
+    protected JdbclyTable table;
+    protected JdbclyResultSet resultSet;
+
+    private int maxRows = 0;
+
+    public JdbclyStatement(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public ResultSet executeQuery(String sql) throws SQLException {
+        SelectStatement statement = SelectStatement.from(sql);
+        determineLimit(statement);
+
+        table = JdbcUtils.extractTable(context.getTables(null, null), statement.getTable());
+        JdbclyColumn[] columns = context.getColumns(table);
+
+        QueryEngine engine = new QueryEngine(statement, columns);
+        engine.executeQuery(context.getSelectOperation());
+
+        RowSet rowSet = RowSet.create(JdbcUtils.extractColumnNames(columns), engine.getResults());
+        engine.processRowSet(rowSet);
+
+        return resultSet = JdbclyResultSet.from(rowSet, this, table);
+    }
+
+    private void determineLimit(SelectStatement statement) {
+        if (maxRows != 0 && statement.getLimit() != 0) {
+            statement.setLimit(Math.min(maxRows, statement.getLimit()));
+        } else if (maxRows != 0) {
+            statement.setLimit(maxRows);
+        }
+    }
+
+    @Override
+    public int executeUpdate(String sql) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public void close() throws SQLException {
+        closed = true;
+        resultSet.close();
+    }
+
+    @Override
+    public int getMaxFieldSize() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public void setMaxFieldSize(int max) throws SQLException {
+
+    }
+
+    @Override
+    public int getMaxRows() throws SQLException {
+        return maxRows;
+    }
+
+    @Override
+    public void setMaxRows(int max) throws SQLException {
+        maxRows = max;
+    }
+
+    @Override
+    public void setEscapeProcessing(boolean enable) throws SQLException {
+
+    }
+
+    @Override
+    public int getQueryTimeout() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public void setQueryTimeout(int seconds) throws SQLException {
+
+    }
+
+    @Override
+    public void cancel() throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public SQLWarning getWarnings() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void clearWarnings() throws SQLException {
+
+    }
+
+    @Override
+    public void setCursorName(String name) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public boolean execute(String sql) throws SQLException {
+        executeQuery(sql);
+        return true;
+    }
+
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        if (closed) {
+            throw new SQLException("Statement is closed.");
+        }
+        return resultSet;
+    }
+
+    @Override
+    public int getUpdateCount() throws SQLException {
+        return -1;
+    }
+
+    @Override
+    public boolean getMoreResults() throws SQLException {
+        return false;
+    }
+
+    @Override
+    public void setFetchDirection(int direction) throws SQLException {
+
+    }
+
+    @Override
+    public int getFetchDirection() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
+
+    }
+
+    @Override
+    public int getFetchSize() throws SQLException {
+        return resultSet.getFetchSize();
+    }
+
+    @Override
+    public int getResultSetConcurrency() throws SQLException {
+        return ResultSet.CONCUR_READ_ONLY;
+    }
+
+    @Override
+    public int getResultSetType() throws SQLException {
+        return ResultSet.TYPE_FORWARD_ONLY;
+    }
+
+    @Override
+    public void addBatch(String sql) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public void clearBatch() throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public int[] executeBatch() throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return context.getConnection().getJdbcConnection();
+    }
+
+    @Override
+    public boolean getMoreResults(int current) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public ResultSet getGeneratedKeys() throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public int executeUpdate(String sql, String[] columnNames) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
+
+    @Override
+    public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
+        executeQuery(sql);
+        return true;
+    }
+
+    @Override
+    public boolean execute(String sql, int[] columnIndexes) throws SQLException {
+        executeQuery(sql);
+        return true;
+    }
+
+    @Override
+    public boolean execute(String sql, String[] columnNames) throws SQLException {
+        executeQuery(sql);
+        return true;
+    }
+
+    @Override
+    public int getResultSetHoldability() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+        return closed;
+    }
+
+    @Override
+    public void setPoolable(boolean poolable) throws SQLException {
+
+    }
+
+    @Override
+    public boolean isPoolable() throws SQLException {
+        return false;
+    }
+
+    @Override
+    public void closeOnCompletion() throws SQLException {
+
+    }
+
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        return false;
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
+    }
+}
