@@ -8,11 +8,11 @@ import com.jdbcly.core.Utils;
  */
 public interface CriteriaEvaluator {
 
-    boolean evaluateInternal(Comparable o1, Comparable o2);
+    boolean evaluateUnsafe(Comparable o1, Comparable o2);
 
     default boolean evaluate(Comparable o1, Comparable o2) {
         try {
-            return evaluateInternal(adapt(o1), adapt(o2));
+            return evaluateUnsafe(adapt(o1), adapt(o2));
         } catch (ClassCastException e) {
             throw new RuntimeException("Values cannot be compared: " + Utils.toString(o1) + ", " + Utils.toString(o2));
         }
@@ -29,7 +29,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator AND = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(true) == 0 && o2.compareTo(true) == 0;
         }
 
@@ -41,7 +41,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator OR = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(true) == 0 || o2.compareTo(true) == 0;
         }
 
@@ -53,7 +53,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator EQUAL = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(o2) == 0;
         }
 
@@ -65,7 +65,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator NOT_EQUAL = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(o2) != 0;
         }
 
@@ -77,7 +77,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator SMALLER = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(o2) < 0;
         }
 
@@ -89,7 +89,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator SMALLER_EQUAL = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(o2) <= 0;
         }
 
@@ -101,7 +101,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator BIGGER = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(o2) > 0;
         }
 
@@ -113,7 +113,7 @@ public interface CriteriaEvaluator {
 
     CriteriaEvaluator BIGGER_EQUAL = new CriteriaEvaluator() {
         @Override
-        public boolean evaluateInternal(Comparable o1, Comparable o2) {
+        public boolean evaluateUnsafe(Comparable o1, Comparable o2) {
             return o1.compareTo(o2) >= 0;
         }
 
