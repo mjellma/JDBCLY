@@ -1,7 +1,7 @@
 package com.jdbcly.files;
 
-import com.jdbcly.core.TablesDefinition;
 import com.jdbcly.core.Constants;
+import com.jdbcly.core.metadata.TablesDefinition;
 import com.jdbcly.engine.Context;
 import com.jdbcly.jdbc.JdbclyTable;
 

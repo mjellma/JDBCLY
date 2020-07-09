@@ -1,4 +1,4 @@
-package com.jdbcly.core;
+package com.jdbcly.utils;
 
 import java.util.HashMap;
 import java.util.Map;

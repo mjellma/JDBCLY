@@ -1,7 +1,7 @@
 package com.jdbcly.files;
 
+import com.jdbcly.core.ResultItem;
 import com.jdbcly.engine.ItemAvailabilityListener;
-import com.jdbcly.engine.ResultItem;
 
 import java.util.List;
 

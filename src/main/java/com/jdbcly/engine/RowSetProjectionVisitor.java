@@ -1,7 +1,7 @@
 package com.jdbcly.engine;
 
 import com.jdbcly.core.SelectStatement;
-import com.jdbcly.core.SqlColumn;
+import com.jdbcly.core.SqlExpression;
 
 import java.util.List;
 
@@ -20,23 +20,9 @@ public class RowSetProjectionVisitor implements RowSetVisitor {
     public void visit(RowSet rowSet) {
         if (select.getProjection().isEmpty()) return;
 
-        List<SqlColumn> columns = select.getProjection();
-        String[] labels = columns.stream().map(SqlColumn::getName).toArray(String[]::new);
+        List<SqlExpression> columns = select.getProjection();
+        String[] labels = columns.stream().map(SqlExpression::getName).toArray(String[]::new);
 
-        Comparable[] values;
-        for (Row row : rowSet.rows) {
-            values = new Comparable[labels.length];
-            for (int i = 0; i < labels.length; i++) {
-                int index = rowSet.getColumnIndex(labels[i]);
-                values[i] = row.getValue(index);
-            }
-            row.setValues(values);
-        }
-
-        rowSet.labels = labels;
-        rowSet.columnSqlIndices.clear();
-        for (int i = 0; i < labels.length; i++) {
-            rowSet.columnSqlIndices.put(labels[i], i + 1);
-        }
+        rowSet.narrowProjection(labels);
     }
 }

@@ -10,14 +10,14 @@ public class Property<T> {
     private String key;
     private String defValue;
 
-    private PropertyConversionFunction<T> converter;
+    private ConversionFunction<T> converter;
 
     public Property(String key, String defValue) {
         this.key = key;
         this.defValue = defValue;
     }
 
-    public Property(String key, String defValue, PropertyConversionFunction<T> converter) {
+    public Property(String key, String defValue, ConversionFunction<T> converter) {
         this.key = key;
         this.defValue = defValue;
         this.converter = converter;
@@ -37,11 +37,11 @@ public class Property<T> {
         }
         return (T) value;
     }
-}
 
-interface PropertyConversionFunction<T> {
-    /**
-     * @return {@code value} converted to type T
-     */
-    T convert(String value);
+    interface ConversionFunction<T> {
+        /**
+         * @return {@code value} converted to type T
+         */
+        T convert(String value);
+    }
 }

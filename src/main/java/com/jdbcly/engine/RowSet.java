@@ -1,5 +1,7 @@
 package com.jdbcly.engine;
 
+import com.jdbcly.core.ResultItem;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +20,9 @@ public class RowSet implements Closeable {
     private int currentRow = -1;
 
     // indexed values start from 1
-    final ResultItem<Integer> columnSqlIndices = new ResultItem<>();
-    String[] labels;
-    ArrayList<Row> rows;
+    private ResultItem<Integer> columnSqlIndices = new ResultItem<>();
+    private String[] labels;
+    private ArrayList<Row> rows;
 
     private RowSet(String[] labels, List<ResultItem<?>> rows) {
         this.labels = labels;
@@ -55,6 +57,14 @@ public class RowSet implements Closeable {
 
     public int size() {
         return rows.size();
+    }
+
+    public ResultItem<Integer> getColumnSqlIndices() {
+        return columnSqlIndices;
+    }
+
+    public ArrayList<Row> getRows() {
+        return rows;
     }
 
     public <T> T getValue(String label) {
@@ -94,6 +104,10 @@ public class RowSet implements Closeable {
     }
 
     // External manipulation methods
+    void setRows(ArrayList<Row> rows) {
+        this.rows = rows;
+    }
+
     void reorderRows(Comparator<Row> comparator) {
         rows.sort(comparator);
     }
@@ -105,25 +119,22 @@ public class RowSet implements Closeable {
     void filter(Predicate<Row> filter) {
         rows = rows.stream().filter(filter).collect(Collectors.toCollection(ArrayList::new));
     }
-}
 
-class Row {
-    private Comparable[] values;
-
-    public Row(Comparable[] values) {
-        this.values = values;
-    }
-
-    public Comparable getValue(int sqlIndex) {
-        int i = sqlIndex - 1;
-        Comparable value = null;
-        if (i >= 0 && i < values.length) {
-            value = values[i];
+    void narrowProjection(String[] labels) {
+        Comparable[] values;
+        for (Row row : rows) {
+            values = new Comparable[labels.length];
+            for (int i = 0; i < labels.length; i++) {
+                int index = getColumnIndex(labels[i]);
+                values[i] = row.getValue(index);
+            }
+            row.setValues(values);
         }
-        return value;
-    }
 
-    void setValues(Comparable[] values) {
-        this.values = values;
+        this.labels = labels;
+        columnSqlIndices.clear();
+        for (int i = 0; i < labels.length; i++) {
+            columnSqlIndices.put(labels[i], i + 1);
+        }
     }
 }

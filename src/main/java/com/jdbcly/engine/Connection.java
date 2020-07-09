@@ -2,9 +2,10 @@ package com.jdbcly.engine;
 
 import com.jdbcly.core.Properties;
 import com.jdbcly.core.Property;
-import com.jdbcly.core.Utils;
+import com.jdbcly.core.ResultItem;
 import com.jdbcly.jdbc.JdbclyConnection;
 import com.jdbcly.jdbc.JdbclyDriver;
+import com.jdbcly.utils.Utils;
 
 /**
  * Date: 6/27/2020

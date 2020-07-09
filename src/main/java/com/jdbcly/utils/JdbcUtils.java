@@ -1,19 +1,33 @@
-package com.jdbcly.core;
+package com.jdbcly.utils;
 
-import com.jdbcly.engine.ResultItem;
+import com.jdbcly.core.ESqlDataType;
+import com.jdbcly.core.ResultItem;
+import com.jdbcly.core.SelectStatement;
+import com.jdbcly.core.SqlExpression;
 import com.jdbcly.jdbc.JdbclyColumn;
 import com.jdbcly.jdbc.JdbclyTable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Date: 7/1/2020
  */
 public class JdbcUtils {
-    public static String[] extractColumnNames(JdbclyColumn[] columns) {
-        return Arrays.stream(columns).map(JdbclyColumn::getName).toArray(String[]::new);
+
+    public static String[] determineAvailableProjection(JdbclyColumn[] columns, SelectStatement statement) {
+        Set<String> projection = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for (JdbclyColumn column : columns) {
+            projection.add(column.getName());
+        }
+
+        for (SqlExpression column : statement.getProjection()) {
+            projection.add(column.getName());
+        }
+
+        return projection.toArray(new String[0]);
     }
 
     public static JdbclyTable extractTable(JdbclyTable[] tables, String table) {

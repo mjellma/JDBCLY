@@ -1,7 +1,7 @@
 package com.jdbcly.engine;
 
 import com.jdbcly.core.ESqlDataType;
-import com.jdbcly.core.Utils;
+import com.jdbcly.utils.Utils;
 
 /**
  * Date: 6/28/2020

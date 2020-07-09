@@ -1,12 +1,10 @@
 package com.jdbcly.jdbc;
 
 import com.jdbcly.core.ESqlDataType;
-import com.jdbcly.engine.ResultItem;
+import com.jdbcly.core.ResultItem;
 
 import java.sql.ResultSetMetaData;
-import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

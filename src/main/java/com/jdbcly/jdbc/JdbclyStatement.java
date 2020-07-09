@@ -1,10 +1,10 @@
 package com.jdbcly.jdbc;
 
-import com.jdbcly.core.JdbcUtils;
 import com.jdbcly.core.SelectStatement;
 import com.jdbcly.engine.Context;
 import com.jdbcly.engine.QueryEngine;
 import com.jdbcly.engine.RowSet;
+import com.jdbcly.utils.JdbcUtils;
 
 import java.sql.*;
 
@@ -36,7 +36,8 @@ public class JdbclyStatement implements Statement {
         QueryEngine engine = new QueryEngine(statement, columns);
         engine.executeQuery(context.getSelectOperation());
 
-        RowSet rowSet = RowSet.create(JdbcUtils.extractColumnNames(columns), engine.getResults());
+        String[] availableProjection = JdbcUtils.determineAvailableProjection(columns, statement);
+        RowSet rowSet = RowSet.create(availableProjection, engine.getResults());
         engine.processRowSet(rowSet);
 
         return resultSet = JdbclyResultSet.from(rowSet, this, table);

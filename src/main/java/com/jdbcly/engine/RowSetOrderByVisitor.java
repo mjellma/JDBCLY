@@ -23,7 +23,7 @@ public class RowSetOrderByVisitor implements RowSetVisitor {
         rowSet.reorderRows((row1, row2) -> {
             for (int i = 0; i < order.size(); i++) {
                 SelectStatement.OrderBy orderBy = order.get(i);
-                int columnIndex = rowSet.getColumnIndex(orderBy.getColumn().getName());
+                int columnIndex = rowSet.getColumnIndex(orderBy.getExpression().getName());
                 Comparable o1 = row1.getValue(columnIndex);
                 Comparable o2 = row2.getValue(columnIndex);
 

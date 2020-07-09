@@ -1,4 +1,4 @@
-package com.jdbcly.core;
+package com.jdbcly.utils;
 
 /**
  * Date: 6/30/2020

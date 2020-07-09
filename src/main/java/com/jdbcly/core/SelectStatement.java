@@ -3,6 +3,8 @@ package com.jdbcly.core;
 import com.jdbcly.engine.Criteria;
 import com.jdbcly.engine.CriteriaUtils;
 import com.jdbcly.exceptions.NotSupportedException;
+import com.jdbcly.utils.ExpressionUtils;
+import com.jdbcly.utils.Utils;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -10,13 +12,14 @@ import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.ComparisonOperator;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Date: 6/27/2020
@@ -26,8 +29,9 @@ public class SelectStatement {
     private final PlainSelect select;
 
     private String table;
-    private List<SqlColumn> projection = new ArrayList<>();
+    private List<SqlExpression> projection = new ArrayList<>();
     private List<OrderBy> orderBy = new ArrayList<>();
+    private List<GroupBy> groupBy = new ArrayList<>();
     private Criteria criteria = null;
     private int limit = 0, offset = 0;
 
@@ -52,6 +56,8 @@ public class SelectStatement {
         statement.determineProjection();
         statement.determineLimitOffset();
         statement.determineOrderBy();
+        statement.determineGroupBy();
+
         statement.criteria = statement.determineCriteria(select.getWhere());
 
         return statement;
@@ -73,11 +79,7 @@ public class SelectStatement {
 
             @Override
             public void visit(SelectExpressionItem selectExpressionItem) {
-                if (selectExpressionItem.getExpression() instanceof Column) {
-                    projection.add(new SqlColumn(((Column) selectExpressionItem.getExpression()).getColumnName()));
-                } else {
-                    throw new NotSupportedException("Only columns are supported in projection. " + selectExpressionItem);
-                }
+                projection.add(ExpressionUtils.mapJsqlExpression(selectExpressionItem.getExpression()));
             }
         };
         select.getSelectItems().forEach(i -> i.accept(visitor));
@@ -94,15 +96,40 @@ public class SelectStatement {
 
     private void determineOrderBy() {
         for (OrderByElement exp : Utils.getNonNull(select.getOrderByElements())) {
-            if (exp.getExpression() instanceof Column) {
-                orderBy.add(new OrderBy(((Column) exp.getExpression()).getColumnName(), exp.isAsc()));
+            if (exp.getExpression() instanceof net.sf.jsqlparser.schema.Column) {
+                String columnName = ((net.sf.jsqlparser.schema.Column) exp.getExpression()).getColumnName();
+                orderBy.add(new OrderBy(new SqlColumn(columnName), exp.isAsc()));
             } else {
                 throw new NotSupportedException("Only columns are supported in order by. " + exp);
             }
         }
     }
 
-    private Criteria determineCriteria(Expression node) {
+    private void determineGroupBy() {
+        if (select.getGroupBy() == null) return;
+        for (Expression exp : Utils.getNonNull(select.getGroupBy().getGroupByExpressions())) {
+            if (exp instanceof net.sf.jsqlparser.schema.Column) {
+                String columnName = ((net.sf.jsqlparser.schema.Column) exp).getColumnName();
+                groupBy.add(new GroupBy(new SqlColumn(columnName)));
+            } else {
+                throw new NotSupportedException("Only columns are supported in group by. " + exp);
+            }
+        }
+
+        assertProjectionInGroup();
+    }
+
+    private void assertProjectionInGroup() {
+        Set<String> groups = groupBy.stream().map(by -> by.getExpression().getName().toLowerCase()).collect(Collectors.toSet());
+
+        for (SqlExpression projection : projection) {
+            if (!(projection instanceof SqlFunctionAggregate) && !groups.contains(projection.getName().toLowerCase())) {
+                throw new RuntimeException("Only grouped expressions may be present in projection: " + projection.getName());
+            }
+        }
+    }
+
+    private Criteria determineCriteria(net.sf.jsqlparser.expression.Expression node) {
         if (node == null) return null;
         if (node instanceof ComparisonOperator) {
             ComparisonOperator c = (ComparisonOperator) node;
@@ -126,10 +153,6 @@ public class SelectStatement {
     }
 
     public void assertSupportedFunctionality() {
-        if (select.getGroupBy() != null) {
-            throw new NotSupportedException("Group by is not supported.");
-        }
-
         if (!Utils.getNonNull(select.getJoins()).isEmpty()) {
             throw new NotSupportedException("Joins are not supported.");
         }
@@ -139,12 +162,16 @@ public class SelectStatement {
         return table;
     }
 
-    public List<SqlColumn> getProjection() {
+    public List<SqlExpression> getProjection() {
         return projection;
     }
 
     public List<OrderBy> getOrderBy() {
         return orderBy;
+    }
+
+    public List<GroupBy> getGroupBy() {
+        return groupBy;
     }
 
     public int getLimit() {
@@ -164,20 +191,32 @@ public class SelectStatement {
     }
 
     public static class OrderBy {
-        private SqlColumn column;
+        private SqlExpression expression;
         private boolean asc;
 
-        public OrderBy(String column, boolean asc) {
-            this.column = new SqlColumn(column);
+        public OrderBy(SqlExpression expression, boolean asc) {
+            this.expression = expression;
             this.asc = asc;
         }
 
-        public SqlColumn getColumn() {
-            return column;
+        public SqlExpression getExpression() {
+            return expression;
         }
 
         public boolean isAsc() {
             return asc;
+        }
+    }
+
+    public static class GroupBy {
+        private SqlExpression expression;
+
+        public GroupBy(SqlExpression expression) {
+            this.expression = expression;
+        }
+
+        public SqlExpression getExpression() {
+            return expression;
         }
     }
 }

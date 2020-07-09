@@ -1,10 +1,9 @@
 package com.jdbcly.jdbc;
 
 import com.jdbcly.core.ESqlDataType;
-import com.jdbcly.engine.ResultItem;
+import com.jdbcly.core.ResultItem;
 
 import java.sql.DatabaseMetaData;
-import java.sql.Types;
 
 /**
  * Date: 6/27/2020

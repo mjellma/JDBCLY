@@ -1,10 +1,10 @@
 package com.jdbcly.jdbc;
 
-import com.jdbcly.core.ColumnsDefinition;
-import com.jdbcly.core.TablesDefinition;
 import com.jdbcly.core.Constants;
+import com.jdbcly.core.ResultItem;
+import com.jdbcly.core.metadata.ColumnsDefinition;
+import com.jdbcly.core.metadata.TablesDefinition;
 import com.jdbcly.engine.Context;
-import com.jdbcly.engine.ResultItem;
 import com.jdbcly.engine.RowSet;
 
 import java.sql.*;

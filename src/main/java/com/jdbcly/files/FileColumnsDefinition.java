@@ -1,10 +1,13 @@
 package com.jdbcly.files;
 
-import com.jdbcly.core.*;
+import com.jdbcly.core.ESqlDataType;
+import com.jdbcly.core.Properties;
+import com.jdbcly.core.ResultItem;
+import com.jdbcly.core.metadata.ColumnsDefinition;
 import com.jdbcly.engine.Context;
-import com.jdbcly.engine.ResultItem;
 import com.jdbcly.jdbc.JdbclyColumn;
 import com.jdbcly.jdbc.JdbclyTable;
+import com.jdbcly.utils.JdbcUtils;
 
 import java.util.List;
 

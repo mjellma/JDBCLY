@@ -1,7 +1,7 @@
-package com.jdbcly.core;
+package com.jdbcly.core.metadata;
 
+import com.jdbcly.core.ResultItem;
 import com.jdbcly.engine.Context;
-import com.jdbcly.engine.ResultItem;
 import com.jdbcly.jdbc.JdbclyColumn;
 import com.jdbcly.jdbc.JdbclyTable;
 

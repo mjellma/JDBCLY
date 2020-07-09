@@ -1,17 +1,17 @@
 package com.jdbcly.engine;
 
+import com.jdbcly.core.ResultItem;
 import com.jdbcly.core.SelectOperation;
 import com.jdbcly.core.SelectStatement;
-import com.jdbcly.core.Utils;
 import com.jdbcly.jdbc.JdbclyColumn;
+import com.jdbcly.utils.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Date: 6/27/2020
- *
+ * <p>
  * QueryEngine is responsible for processing the results.
  */
 public class QueryEngine {
@@ -40,6 +40,7 @@ public class QueryEngine {
 
     public void processRowSet(RowSet rowSet) {
         rowSet.visit(new RowSetCriteriaVisitor(select));
+        rowSet.visit(new RowSetGroupByVisitor(select));
         rowSet.visit(new RowSetOrderByVisitor(select));
         rowSet.visit(new RowSetLimitOffsetVisitor(select));
         rowSet.visit(new RowSetProjectionVisitor(select));

@@ -1,11 +1,11 @@
 package com.jdbcly.files.csv;
 
-import com.jdbcly.core.StringsCache;
-import com.jdbcly.core.ValueWrapper;
+import com.jdbcly.core.ResultItem;
 import com.jdbcly.engine.ItemAvailabilityListener;
-import com.jdbcly.engine.ResultItem;
 import com.jdbcly.files.IParser;
 import com.jdbcly.files.IReader;
+import com.jdbcly.utils.StringsCache;
+import com.jdbcly.utils.ValueWrapper;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 

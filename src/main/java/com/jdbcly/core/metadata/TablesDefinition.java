@@ -1,4 +1,4 @@
-package com.jdbcly.core;
+package com.jdbcly.core.metadata;
 
 import com.jdbcly.engine.Context;
 import com.jdbcly.jdbc.JdbclyTable;

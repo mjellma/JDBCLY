@@ -1,5 +1,6 @@
-package com.jdbcly.core;
+package com.jdbcly.utils;
 
+import com.jdbcly.core.ESqlDataType;
 import org.apache.commons.beanutils.ConvertUtils;
 
 import java.util.ArrayList;

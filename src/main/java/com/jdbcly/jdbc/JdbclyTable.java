@@ -1,6 +1,6 @@
 package com.jdbcly.jdbc;
 
-import com.jdbcly.engine.ResultItem;
+import com.jdbcly.core.ResultItem;
 
 /**
  * Date: 6/27/2020
