@@ -8,6 +8,7 @@ import com.jdbcly.utils.Utils;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.ComparisonOperator;
@@ -122,6 +123,10 @@ public class SelectStatement {
     private void assertProjectionInGroup() {
         Set<String> groups = groupBy.stream().map(by -> by.getExpression().getName().toLowerCase()).collect(Collectors.toSet());
 
+        if (projection.isEmpty()) {
+            throw new RuntimeException("Only grouped expressions may be present in projection.");
+        }
+
         for (SqlExpression projection : projection) {
             if (!(projection instanceof SqlFunctionAggregate) && !groups.contains(projection.getName().toLowerCase())) {
                 throw new RuntimeException("Only grouped expressions may be present in projection: " + projection.getName());
@@ -147,6 +152,11 @@ public class SelectStatement {
         if (node instanceof OrExpression) {
             OrExpression o = (OrExpression) node;
             return new Criteria.Or(determineCriteria(o.getLeftExpression()), determineCriteria(o.getRightExpression()));
+        }
+
+        if (node instanceof Parenthesis) {
+            Parenthesis p = (Parenthesis) node;
+            return determineCriteria(p.getExpression());
         }
 
         throw new NotSupportedException("Unsupported criteria node: " + node);

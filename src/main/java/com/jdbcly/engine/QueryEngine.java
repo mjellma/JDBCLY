@@ -40,7 +40,7 @@ public class QueryEngine {
 
     public void processRowSet(RowSet rowSet) {
         rowSet.visit(new RowSetCriteriaVisitor(select));
-        rowSet.visit(new RowSetGroupByVisitor(select));
+        rowSet.visit(new RowSetAggregateVisitor(select));
         rowSet.visit(new RowSetOrderByVisitor(select));
         rowSet.visit(new RowSetLimitOffsetVisitor(select));
         rowSet.visit(new RowSetProjectionVisitor(select));

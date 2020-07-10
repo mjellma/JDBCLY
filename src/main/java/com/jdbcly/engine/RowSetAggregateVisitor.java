@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 /**
  * Date: 7/8/2020
  */
-public class RowSetGroupByVisitor implements RowSetVisitor {
+public class RowSetAggregateVisitor implements RowSetVisitor {
 
     private final SelectStatement select;
 
-    public RowSetGroupByVisitor(SelectStatement select) {
+    public RowSetAggregateVisitor(SelectStatement select) {
         this.select = select;
     }
 

@@ -70,7 +70,7 @@ public abstract class AggregateFunctionEvaluator {
         @Override
         public Comparable evaluate(ResultItem<Integer> columnSqlIndices, List<Row> rows) {
             int index = columnSqlIndices.get(column.getName());
-            float sum = 0;
+            double sum = 0;
             Comparable val;
             for (Row row : rows) {
                 val = row.getValue(index);

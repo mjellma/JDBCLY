@@ -20,6 +20,14 @@ abstract public class Criteria {
 
     public abstract Comparable evaluate();
 
+    public Criteria getLeft() {
+        return left;
+    }
+
+    public Criteria getRight() {
+        return right;
+    }
+
     public static class Column extends Criteria {
         private SqlColumn column;
 

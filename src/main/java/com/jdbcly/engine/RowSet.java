@@ -51,20 +51,20 @@ public class RowSet implements Closeable {
         visitor.visit(this);
     }
 
+    ResultItem<Integer> getColumnSqlIndices() {
+        return columnSqlIndices;
+    }
+
+    ArrayList<Row> getRows() {
+        return rows;
+    }
+
     public boolean next() {
         return currentRow++ != rows.size() - 1;
     }
 
     public int size() {
         return rows.size();
-    }
-
-    public ResultItem<Integer> getColumnSqlIndices() {
-        return columnSqlIndices;
-    }
-
-    public ArrayList<Row> getRows() {
-        return rows;
     }
 
     public <T> T getValue(String label) {
