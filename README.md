@@ -67,12 +67,14 @@ public class Main {
 - Read from CSV files
 - Support for VARCHAR (String) and DOUBLE data types.
 - Data type is determined automatically.
-- The following SQL features are partially supported (formula support is missing):
-    - Columns projection (select which columns to retrieve)
-    - Order By (sort on column values)
-    - Where (filter on column values)
+- The following SQL features are partially supported:
+    - Columns projection
+    - Order By
+    - Group By
+    - Where (filter on column values only)
     - Limit
     - Offset
+    - The following functions: COUNT, MIN, MAX, SUM
     
 ## Documentation
 - General
@@ -91,7 +93,6 @@ public class Main {
     
     
 ## TODO
-- Add tests
 - Add support for more data types
 - Add support for more source formats (json, xml)
 ---
