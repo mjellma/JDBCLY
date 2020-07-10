@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 /**
  * Date: 6/27/2020
- *
+ * <p>
  * ResultItem<V> serves as a case-insensitive map, with keys of type String and values of type V.
  * The core behavior is delegated to an underlying TreeMap.
  */
@@ -28,6 +28,10 @@ public class ResultItem<V> {
 
     public V put(String key, V value) {
         return delegate.put(key, value);
+    }
+
+    public void remove(String key) {
+        delegate.remove(key);
     }
 
     public void clear() {

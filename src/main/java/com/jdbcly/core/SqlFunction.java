@@ -5,7 +5,8 @@ package com.jdbcly.core;
  */
 public class SqlFunction extends SqlExpression {
     // TODO: 7/9/2020
-    public SqlFunction(String name) {
-        super(name);
+
+    public SqlFunction(String name, String alias) {
+        super(name, alias);
     }
 }

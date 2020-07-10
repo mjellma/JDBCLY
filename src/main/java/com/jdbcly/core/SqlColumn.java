@@ -7,7 +7,11 @@ public class SqlColumn extends SqlExpression {
     private Comparable value;
 
     public SqlColumn(String name) {
-        super(name);
+        this(name, null);
+    }
+
+    public SqlColumn(String name, String alias) {
+        super(name, alias);
     }
 
     public Comparable getValue() {

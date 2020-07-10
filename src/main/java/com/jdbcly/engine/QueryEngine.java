@@ -3,6 +3,7 @@ package com.jdbcly.engine;
 import com.jdbcly.core.ResultItem;
 import com.jdbcly.core.SelectOperation;
 import com.jdbcly.core.SelectStatement;
+import com.jdbcly.core.SqlExpression;
 import com.jdbcly.jdbc.JdbclyColumn;
 import com.jdbcly.utils.Utils;
 
@@ -39,6 +40,8 @@ public class QueryEngine {
     }
 
     public void processRowSet(RowSet rowSet) {
+        rowSet.visit(new RowSetAliasVisitor(select));
+
         rowSet.visit(new RowSetCriteriaVisitor(select));
         rowSet.visit(new RowSetAggregateVisitor(select));
         rowSet.visit(new RowSetOrderByVisitor(select));

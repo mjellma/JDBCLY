@@ -36,7 +36,7 @@ public class RowSetAggregateVisitor implements RowSetVisitor {
 
     private void evaluateUngrouped(RowSet rowSet, List<SqlFunctionAggregate> aggregateFunctions) {
         for (SqlFunctionAggregate function : aggregateFunctions) {
-            int sqlIndex = rowSet.getColumnIndex(function.getName());
+            int sqlIndex = rowSet.getColumnIndex(function.getNameAlias());
 
             // no grouping is performed, same value is used
             Comparable value = function.evaluate(rowSet.getColumnSqlIndices(), rowSet.getRows());
@@ -57,7 +57,7 @@ public class RowSetAggregateVisitor implements RowSetVisitor {
             results.add(newVal);
 
             for (SqlFunctionAggregate function : aggregateFunctions) {
-                int sqlIndex = rowSet.getColumnIndex(function.getName());
+                int sqlIndex = rowSet.getColumnIndex(function.getNameAlias());
                 newVal.setValue(function.evaluate(rowSet.getColumnSqlIndices(), rows), sqlIndex);
             }
         }
@@ -66,7 +66,7 @@ public class RowSetAggregateVisitor implements RowSetVisitor {
     }
 
     private Map<List<Comparable>, List<Row>> performGrouping(RowSet rowSet) {
-        String[] columns = select.getGroupBy().stream().map(c -> c.getExpression().getName()).toArray(String[]::new);
+        String[] columns = select.getGroupBy().stream().map(c -> c.getExpression().getNameAlias()).toArray(String[]::new);
         Map<List<Comparable>, List<Row>> groups = new HashMap<>();
         List<Comparable> key; // TODO: 7/9/2020 should use an immutable collection
         List<Row> groupedRows;

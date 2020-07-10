@@ -27,7 +27,7 @@ public abstract class AggregateFunctionEvaluator {
                 return rows.size();
             }
 
-            int index = columnSqlIndices.get(column.getName());
+            int index = columnSqlIndices.get(column.getNameAlias());
             return rows.stream().filter(r -> r.getValue(index) != null).count();
         }
     }
@@ -41,7 +41,7 @@ public abstract class AggregateFunctionEvaluator {
 
         @Override
         public Comparable evaluate(ResultItem<Integer> columnSqlIndices, List<Row> rows) {
-            int index = columnSqlIndices.get(column.getName());
+            int index = columnSqlIndices.get(column.getNameAlias());
             return rows.stream().map(r -> r.getValue(index)).filter(Objects::nonNull).min(Comparable::compareTo).orElse(0);
         }
     }
@@ -55,7 +55,7 @@ public abstract class AggregateFunctionEvaluator {
 
         @Override
         public Comparable evaluate(ResultItem<Integer> columnSqlIndices, List<Row> rows) {
-            int index = columnSqlIndices.get(column.getName());
+            int index = columnSqlIndices.get(column.getNameAlias());
             return rows.stream().map(r -> r.getValue(index)).filter(Objects::nonNull).max(Comparable::compareTo).orElse(0);
         }
     }
@@ -69,7 +69,7 @@ public abstract class AggregateFunctionEvaluator {
 
         @Override
         public Comparable evaluate(ResultItem<Integer> columnSqlIndices, List<Row> rows) {
-            int index = columnSqlIndices.get(column.getName());
+            int index = columnSqlIndices.get(column.getNameAlias());
             double sum = 0;
             Comparable val;
             for (Row row : rows) {

@@ -57,12 +57,12 @@ public class CriteriaUtils {
             Criteria.Comparison c = (Criteria.Comparison) criteria;
             if (c.left instanceof Criteria.Column) {
                 SqlColumn column = ((Criteria.Column) c.left).getColumn();
-                Comparable value = row.getValue(rowSet.getColumnIndex(column.getName()));
+                Comparable value = row.getValue(rowSet.getColumnIndex(column.getNameAlias()));
                 column.setValue(value);
             }
             if (c.right instanceof Criteria.Column) {
                 SqlColumn column = ((Criteria.Column) c.right).getColumn();
-                Comparable value = row.getValue(rowSet.getColumnIndex(column.getName()));
+                Comparable value = row.getValue(rowSet.getColumnIndex(column.getNameAlias()));
                 column.setValue(value);
             }
 

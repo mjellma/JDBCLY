@@ -11,8 +11,8 @@ import java.util.List;
 public class SqlFunctionAggregate extends SqlExpression {
     private AggregateFunctionEvaluator evaluator;
 
-    public SqlFunctionAggregate(String name, AggregateFunctionEvaluator evaluator) {
-        super(name);
+    public SqlFunctionAggregate(String name, String alias, AggregateFunctionEvaluator evaluator) {
+        super(name, alias);
         this.evaluator = evaluator;
     }
 

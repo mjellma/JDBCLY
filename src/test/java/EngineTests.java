@@ -1,4 +1,5 @@
 import com.jdbcly.core.ResultItem;
+import com.jdbcly.core.SelectStatement;
 import com.jdbcly.engine.*;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,53 @@ import java.util.List;
  * Date: 7/10/2020
  */
 public class EngineTests extends TestBase {
+
+    @Test
+    void aliasesTest() throws Exception {
+        // aliases in projection/function
+        RowSet rowSet = createRowSet("countC", "countR");
+        SelectStatement statement = createStatement("SELECT Country AS c, Region AS r, COUNT(c) AS countC, COUNT(r) AS countR FROM TABLE");
+        rowSet.visit(new RowSetAliasVisitor(statement));
+        rowSet.visit(new RowSetAggregateVisitor(statement));
+
+        rowSet.next();
+        assertTrue(rowSet.getValue("c").equals("Germany"));
+        assertTrue(rowSet.getValue("r").equals("Europe"));
+        assertTrue(rowSet.getValue("countC").equals(5L));
+        assertTrue(rowSet.getValue("countR").equals(5L));
+
+        // alias in order by
+        rowSet = createRowSet();
+        statement = createStatement("SELECT Country AS c FROM TABLE ORDER BY c");
+        rowSet.visit(new RowSetAliasVisitor(statement));
+        rowSet.visit(new RowSetOrderByVisitor(statement));
+        rowSet.next();
+        assertTrue(rowSet.getValue("c").equals("Azebaijan"));
+
+        // alias in group by
+        rowSet = createRowSet();
+        statement = createStatement("SELECT Region AS r FROM TABLE GROUP BY r");
+        rowSet.visit(new RowSetAliasVisitor(statement));
+        rowSet.visit(new RowSetAggregateVisitor(statement));
+        assertTrue(rowSet.size() == 2);
+        rowSet.next();
+        assertTrue(rowSet.getValue("r").equals("Europe"));
+        rowSet.next();
+        assertTrue(rowSet.getValue("r").equals("Middle East"));
+
+        // alias in criteria
+        rowSet = createRowSet();
+        statement = createStatement("SELECT Region AS r, Country FROM TABLE WHERE r = 'Europe'");
+        rowSet.visit(new RowSetAliasVisitor(statement));
+        rowSet.visit(new RowSetCriteriaVisitor(statement));
+        assertTrue(rowSet.size() == 2);
+        rowSet.next();
+        assertTrue(rowSet.getValue("r").equals("Europe"));
+        assertTrue(rowSet.getValue("Country").equals("Germany"));
+        rowSet.next();
+        assertTrue(rowSet.getValue("r").equals("Europe"));
+        assertTrue(rowSet.getValue("Country").equals("Denmark"));
+    }
 
     @Test
     void rowSetLimitOffset() throws Exception {

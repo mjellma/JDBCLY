@@ -80,7 +80,7 @@ public class SelectStatement {
 
             @Override
             public void visit(SelectExpressionItem selectExpressionItem) {
-                projection.add(ExpressionUtils.mapJsqlExpression(selectExpressionItem.getExpression()));
+                projection.add(ExpressionUtils.mapJsqlExpression(selectExpressionItem.getExpression(), selectExpressionItem.getAlias()));
             }
         };
         select.getSelectItems().forEach(i -> i.accept(visitor));
@@ -121,15 +121,15 @@ public class SelectStatement {
     }
 
     private void assertProjectionInGroup() {
-        Set<String> groups = groupBy.stream().map(by -> by.getExpression().getName().toLowerCase()).collect(Collectors.toSet());
+        Set<String> groups = groupBy.stream().map(by -> by.getExpression().getNameAlias().toLowerCase()).collect(Collectors.toSet());
 
         if (projection.isEmpty()) {
             throw new RuntimeException("Only grouped expressions may be present in projection.");
         }
 
         for (SqlExpression projection : projection) {
-            if (!(projection instanceof SqlFunctionAggregate) && !groups.contains(projection.getName().toLowerCase())) {
-                throw new RuntimeException("Only grouped expressions may be present in projection: " + projection.getName());
+            if (!(projection instanceof SqlFunctionAggregate) && !groups.contains(projection.getNameAlias().toLowerCase())) {
+                throw new RuntimeException("Only grouped expressions may be present in projection: " + projection.getNameAlias());
             }
         }
     }

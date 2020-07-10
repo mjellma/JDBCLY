@@ -4,10 +4,7 @@ import com.jdbcly.core.ResultItem;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -101,6 +98,15 @@ public class RowSet implements Closeable {
 
     public int getCurrentRowSqlIndexed() {
         return currentRow + 1;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Row row : rows) {
+            builder.append(row).append("\n");
+        }
+        return builder.toString();
     }
 
     // External manipulation methods

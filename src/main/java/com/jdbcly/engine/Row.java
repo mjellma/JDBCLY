@@ -1,6 +1,7 @@
 package com.jdbcly.engine;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Date: 7/8/2020
@@ -31,5 +32,10 @@ public class Row {
 
     public Row copy() {
         return new Row(Arrays.copyOf(values, values.length));
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.stream(values).map(String::valueOf).collect(Collectors.joining(","));
     }
 }

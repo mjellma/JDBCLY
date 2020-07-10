@@ -24,7 +24,7 @@ public class JdbcUtils {
         }
 
         for (SqlExpression column : statement.getProjection()) {
-            projection.add(column.getName());
+            projection.add(column.getNameAlias());
         }
 
         return projection.toArray(new String[0]);

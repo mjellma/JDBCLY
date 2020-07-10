@@ -21,7 +21,7 @@ public class RowSetProjectionVisitor implements RowSetVisitor {
         if (select.getProjection().isEmpty()) return;
 
         List<SqlExpression> columns = select.getProjection();
-        String[] labels = columns.stream().map(SqlExpression::getName).toArray(String[]::new);
+        String[] labels = columns.stream().map(SqlExpression::getNameAlias).toArray(String[]::new);
 
         rowSet.narrowProjection(labels);
     }
