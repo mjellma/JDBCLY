@@ -49,7 +49,7 @@ public class ExpressionUtils {
                 return new SqlFunctionAggregate(name, aliasName, new AggregateFunctionEvaluator.Sum(new SqlColumn(parameters[0])));
         }
 
-        throw new RuntimeException("Function not yet supported: " + name);
+        throw new NotSupportedException("Function not yet supported: " + name);
     }
 
     private static String getAlias(Alias alias) {

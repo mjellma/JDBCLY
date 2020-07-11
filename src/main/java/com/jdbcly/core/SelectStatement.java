@@ -2,6 +2,7 @@ package com.jdbcly.core;
 
 import com.jdbcly.engine.Criteria;
 import com.jdbcly.engine.CriteriaUtils;
+import com.jdbcly.exceptions.JdbclyException;
 import com.jdbcly.exceptions.NotSupportedException;
 import com.jdbcly.utils.ExpressionUtils;
 import com.jdbcly.utils.Utils;
@@ -124,12 +125,12 @@ public class SelectStatement {
         Set<String> groups = groupBy.stream().map(by -> by.getExpression().getNameAlias().toLowerCase()).collect(Collectors.toSet());
 
         if (projection.isEmpty()) {
-            throw new RuntimeException("Only grouped expressions may be present in projection.");
+            throw new JdbclyException("Only grouped expressions may be present in projection.");
         }
 
         for (SqlExpression projection : projection) {
             if (!(projection instanceof SqlFunctionAggregate) && !groups.contains(projection.getNameAlias().toLowerCase())) {
-                throw new RuntimeException("Only grouped expressions may be present in projection: " + projection.getNameAlias());
+                throw new JdbclyException("Only grouped expressions may be present in projection: " + projection.getNameAlias());
             }
         }
     }

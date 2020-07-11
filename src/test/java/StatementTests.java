@@ -1,5 +1,7 @@
 import com.jdbcly.core.SelectStatement;
+import com.jdbcly.core.SqlFunctionAggregate;
 import com.jdbcly.engine.Criteria;
+import com.jdbcly.exceptions.JdbclyException;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,15 +18,19 @@ public class StatementTests extends TestBase {
     void statementFunctionInProjection() throws Exception {
         SelectStatement statement = createStatement("SELECT COUNT(*) FROM TABLE");
         assertTrue(statement.getProjection().size() == 1);
-        assertTrue(statement.getProjection().get(0).getName().equalsIgnoreCase("Count"));
+        assertTrue(statement.getProjection().get(0).getNameAlias().equalsIgnoreCase("Count"));
     }
 
     @Test
     void statementColumnProjectionLimitOffset() throws Exception {
-        SelectStatement statement = createStatement("SELECT Col1, Col2 FROM TABLE Limit 4");
-        assertTrue(statement.getProjection().size() == 2);
-        assertTrue(statement.getProjection().get(0).getName().equalsIgnoreCase("Col1"));
-        assertTrue(statement.getProjection().get(1).getName().equalsIgnoreCase("Col2"));
+        SelectStatement statement = createStatement("SELECT Col1, Col2, COUNT(Col3) AS Cnt FROM TABLE Limit 4");
+        assertTrue(statement.getProjection().size() == 3);
+        assertTrue(statement.getProjection().get(0).getNameAlias().equalsIgnoreCase("Col1"));
+        assertTrue(statement.getProjection().get(1).getNameAlias().equalsIgnoreCase("Col2"));
+        
+        assertTrue(statement.getProjection().get(2).getNameAlias().equalsIgnoreCase("Cnt"));
+        assertTrue(statement.getProjection().get(2) instanceof SqlFunctionAggregate);
+        
         assertTrue(statement.getLimit() == 4);
         assertTrue(statement.getOffset() == 0);
 
@@ -50,11 +56,11 @@ public class StatementTests extends TestBase {
     void statementColumnOrderBy() throws Exception {
         SelectStatement statement = createStatement("SELECT * FROM TABLE ORDER BY Col1, Col2 DESC, Col3 ASC");
         assertTrue(statement.getOrderBy().size() == 3);
-        assertTrue(statement.getOrderBy().get(0).getExpression().getName().equalsIgnoreCase("Col1"));
+        assertTrue(statement.getOrderBy().get(0).getExpression().getNameAlias().equalsIgnoreCase("Col1"));
         assertTrue(statement.getOrderBy().get(0).isAsc());
-        assertTrue(statement.getOrderBy().get(1).getExpression().getName().equalsIgnoreCase("Col2"));
+        assertTrue(statement.getOrderBy().get(1).getExpression().getNameAlias().equalsIgnoreCase("Col2"));
         assertTrue(!statement.getOrderBy().get(1).isAsc());
-        assertTrue(statement.getOrderBy().get(2).getExpression().getName().equalsIgnoreCase("Col3"));
+        assertTrue(statement.getOrderBy().get(2).getExpression().getNameAlias().equalsIgnoreCase("Col3"));
         assertTrue(statement.getOrderBy().get(2).isAsc());
     }
 
@@ -62,26 +68,22 @@ public class StatementTests extends TestBase {
     void statementColumnGroupBy() throws Exception {
         SelectStatement statement = createStatement("SELECT Col1, Col2 FROM TABLE GROUP BY Col1, Col2");
         assertTrue(statement.getGroupBy().size() == 2);
-        assertTrue(statement.getGroupBy().get(0).getExpression().getName().equalsIgnoreCase("Col1"));
-        assertTrue(statement.getGroupBy().get(1).getExpression().getName().equalsIgnoreCase("Col2"));
+        assertTrue(statement.getGroupBy().get(0).getExpression().getNameAlias().equalsIgnoreCase("Col1"));
+        assertTrue(statement.getGroupBy().get(1).getExpression().getNameAlias().equalsIgnoreCase("Col2"));
     }
 
     @Test
     void unGroupedColumnsInProjection() throws Exception {
-        boolean asserted = false;
         try {
             createStatement("SELECT * FROM TABLE GROUP BY Region, `Unit Price`");
-        } catch (Exception e) {
-            asserted = true;
+            throw new ExceptionShouldHaveBeenThrownException();
+        } catch (JdbclyException expected) {
         }
-        assertTrue(asserted, "Should have thrown exception");
 
-        asserted = false;
         try {
             createStatement("SELECT Region, Country FROM TABLE GROUP BY Region, `Unit Price`");
-        } catch (Exception e) {
-            asserted = true;
+            throw new ExceptionShouldHaveBeenThrownException();
+        } catch (JdbclyException expected) {
         }
-        assertTrue(asserted, "Should have thrown exception");
     }
 }

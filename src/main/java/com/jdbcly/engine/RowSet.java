@@ -1,6 +1,7 @@
 package com.jdbcly.engine;
 
 import com.jdbcly.core.ResultItem;
+import com.jdbcly.exceptions.JdbclyException;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class RowSet implements Closeable {
     public int getColumnIndex(String name) {
         Integer index = columnSqlIndices.get(name);
         if (index == null) {
-            throw new RuntimeException("Column does not exist: " + name);
+            throw new JdbclyException("Column does not exist: " + name);
         }
         return index;
     }

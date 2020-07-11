@@ -20,4 +20,10 @@ public class TestBase {
     SelectStatement createStatement(String sql) throws Exception {
         return SelectStatement.from(sql);
     }
+
+    static class ExceptionShouldHaveBeenThrownException extends RuntimeException {
+        public ExceptionShouldHaveBeenThrownException() {
+            super("Should have thrown exception.");
+        }
+    }
 }

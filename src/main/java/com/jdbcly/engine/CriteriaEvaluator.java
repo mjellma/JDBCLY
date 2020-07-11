@@ -1,6 +1,7 @@
 package com.jdbcly.engine;
 
 import com.jdbcly.core.ESqlDataType;
+import com.jdbcly.exceptions.JdbclyException;
 import com.jdbcly.utils.Utils;
 
 /**
@@ -14,7 +15,7 @@ public interface CriteriaEvaluator {
         try {
             return evaluateUnsafe(adapt(o1), adapt(o2));
         } catch (ClassCastException e) {
-            throw new RuntimeException("Values cannot be compared: " + Utils.toString(o1) + ", " + Utils.toString(o2));
+            throw new JdbclyException("Values cannot be compared: " + Utils.toString(o1) + ", " + Utils.toString(o2));
         }
     }
 

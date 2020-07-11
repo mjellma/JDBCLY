@@ -2,6 +2,7 @@ package com.jdbcly.files;
 
 import com.jdbcly.core.*;
 import com.jdbcly.engine.*;
+import com.jdbcly.exceptions.NotSupportedException;
 import com.jdbcly.files.csv.CsvParser;
 import com.jdbcly.jdbc.JdbclyColumn;
 import com.jdbcly.jdbc.JdbclyTable;
@@ -34,7 +35,7 @@ public class FileContext extends Context {
         if ("csv".equals(scheme)) {
             return new CsvParser(connection.getProperty(Properties.Csv.DELIMITER));
         }
-        throw new RuntimeException("Unsupported scheme: " + scheme);
+        throw new NotSupportedException("Unsupported scheme: " + scheme);
     }
 
     @Override

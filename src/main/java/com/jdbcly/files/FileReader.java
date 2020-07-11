@@ -1,5 +1,7 @@
 package com.jdbcly.files;
 
+import com.jdbcly.exceptions.JdbclyException;
+
 import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +32,7 @@ public class FileReader implements IReader {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new JdbclyException(e);
         }
     }
 }
