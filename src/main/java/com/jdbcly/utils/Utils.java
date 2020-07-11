@@ -37,6 +37,10 @@ public class Utils {
     }
 
     public static Object convert(Object value, ESqlDataType type) {
+        // Apache's bean utils won't convert Strings properly, unless a pattern is specified
+        if (value instanceof String) {
+            return type.parseString((String) value);
+        }
         return ConvertUtils.convert(value, type.getDataClass());
     }
 }

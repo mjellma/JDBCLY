@@ -6,6 +6,7 @@ import com.jdbcly.core.SelectStatement;
 import com.jdbcly.core.SqlExpression;
 import com.jdbcly.jdbc.JdbclyColumn;
 import com.jdbcly.jdbc.JdbclyTable;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -52,20 +53,20 @@ public class JdbcUtils {
     public static ResultItem<ESqlDataType> determineColumnTypes(List<ResultItem<?>> rows) {
         ResultItem<ESqlDataType> types = new ResultItem<>();
 
-        ESqlDataType type;
+        ESqlDataType currentType;
+        ESqlDataType newType;
         for (ResultItem<?> row : rows) {
             for (Map.Entry<String, ?> entry : row.entrySet()) {
-                type = types.get(entry.getKey());
+                currentType = types.get(entry.getKey());
 
-                if (type == ESqlDataType.VARCHAR) {
+                if (currentType == ESqlDataType.VARCHAR) {
                     // String is the lowest type denominator
                     continue;
                 }
 
-                if (isPossibleDouble(entry.getValue())) {
-                    types.put(entry.getKey(), ESqlDataType.DOUBLE);
-                } else {
-                    types.put(entry.getKey(), ESqlDataType.VARCHAR);
+                newType = determineType(entry.getValue());
+                if (currentType == null || (currentType != newType && currentType.isAssignableTo(newType))) {
+                    types.put(entry.getKey(), newType);
                 }
             }
         }
@@ -73,20 +74,24 @@ public class JdbcUtils {
         return types;
     }
 
-    private static boolean isPossibleDouble(Object value) {
-        if (value instanceof Number) {
-            return true;
-        }
-
+    public static ESqlDataType determineType(Object value) {
         if (value instanceof String) {
             try {
-                Double.parseDouble((String) value);
-                return true;
-            } catch (Exception e) {
-                return false;
+                return determineNumberType(NumberUtils.createNumber((String) value));
+            } catch (NumberFormatException e) {
+                return ESqlDataType.VARCHAR;
             }
+        } else if (value instanceof Number) {
+            return determineNumberType((Number) value);
         }
 
-        return false;
+        return ESqlDataType.VARCHAR;
+    }
+
+    public static ESqlDataType determineNumberType(Number number) {
+        if (number.intValue() == number.doubleValue()) {
+            return ESqlDataType.INTEGER;
+        }
+        return ESqlDataType.DOUBLE;
     }
 }
