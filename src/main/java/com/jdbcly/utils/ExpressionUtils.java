@@ -47,6 +47,9 @@ public class ExpressionUtils {
 
             case "sum":
                 return new SqlFunctionAggregate(name, aliasName, new AggregateFunctionEvaluator.Sum(new SqlColumn(parameters[0])));
+
+            case "avg":
+                return new SqlFunctionAggregate(name, aliasName, new AggregateFunctionEvaluator.Average(new SqlColumn(parameters[0])));
         }
 
         throw new NotSupportedException("Function not yet supported: " + name);

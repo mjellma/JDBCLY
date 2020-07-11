@@ -82,4 +82,21 @@ public abstract class AggregateFunctionEvaluator {
             return sum;
         }
     }
+
+    public static class Average extends AggregateFunctionEvaluator {
+        private SqlColumn column;
+
+        public Average(SqlColumn column) {
+            this.column = column;
+        }
+
+        @Override
+        public Comparable evaluate(ResultItem<Integer> columnSqlIndices, List<Row> rows) {
+            Sum sumF = new Sum(column);
+            Double sum = (Double) sumF.evaluate(columnSqlIndices, rows);
+            Count countF = new Count(column);
+            Long count = (Long) countF.evaluate(columnSqlIndices, rows);
+            return sum / count;
+        }
+    }
 }

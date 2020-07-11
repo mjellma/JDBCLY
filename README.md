@@ -65,7 +65,7 @@ public class Main {
 
 ## Features
 - Read from CSV files
-- Support for VARCHAR (String) and DOUBLE data types.
+- Support for VARCHAR (String), DOUBLE and INTEGER data types.
 - Data type is determined automatically.
 - The following SQL features are partially supported:
     - Columns projection
@@ -74,7 +74,7 @@ public class Main {
     - Where (filter on column values only)
     - Limit
     - Offset
-    - The following functions: COUNT, MIN, MAX, SUM
+    - The following functions: COUNT, MIN, MAX, SUM, AVG
     
 ## Documentation
 - General
